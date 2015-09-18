@@ -9,7 +9,15 @@
 # 
  
 IGNORED=(
-# Add here files
+	src/com/squareup/picasso/CacheHelper.java
+	src/com/dexode/animation/
+	src/com/dexode/fragment/
+	src/com/dexode/storage/
+	src/com/dexode/util/BatteryUtils.java
+	src/com/dexode/util/BitmapUtils.java
+	src/com/dexode/util/ShareIntentBuilder.java
+	src/com/dexode/util/Validator.java
+	src/com/dexode/util/DebugLogs.java
 )
 
 for ignored in ${IGNORED[@]}; do
