@@ -1,0 +1,61 @@
+def getVersionCode = { ->
+   try {
+      def stdout = new ByteArrayOutputStream ()
+      exec {
+         commandLine 'git', 'rev-list', '--first-parent', '--count', 'HEAD'
+         standardOutput = stdout
+      }
+      def versionCode = stdout.toString ().trim ()
+      logger.info ( 'VersionCode:' + versionCode )
+      return Integer.parseInt ( versionCode )
+   }
+   catch (ignored) {
+      logger.error ( 'VersionCode: generation failed!' )
+      return -1;
+   }
+}
+
+def getVersionName = { ->
+   try {
+      def stdout = new ByteArrayOutputStream ()
+      exec {
+         commandLine 'git', 'rev-parse', '--abbrev-ref', 'HEAD'
+         standardOutput = stdout
+      }
+
+      def versionName = stdout.toString ().trim ();
+      if (versionName.contains ( 'beta_' )) {
+         versionName = versionName.substring ( 5, versionName.length () )
+         logger.info ( 'VersionName:' + versionName )
+         return versionName
+      }
+
+      stdout.reset ()
+      exec {
+         commandLine 'git', 'describe', '--abbrev=0', '--dirty', '--tags'
+         standardOutput = stdout
+      }
+      versionName = stdout.toString ().trim ()
+      logger.info ( 'VersionName:' + versionName )
+      return versionName
+   }
+   catch (ignored) {
+      logger.error ( 'VersionName: generation failed!' )
+      return "fail";
+   }
+}
+
+def getCommitSHA = { ->
+   try {
+      def stdout = new ByteArrayOutputStream ()
+      exec {
+         commandLine 'git', 'rev-parse', '--verify', 'HEAD'
+         standardOutput = stdout
+      }
+      return stdout.toString ().trim ()
+   }
+   catch (ignored) {
+      logger.error ( 'CommitSHA: generation failed!' )
+      return "fail";
+   }
+}

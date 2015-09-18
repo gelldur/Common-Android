@@ -1,0 +1,14 @@
+	//Put this in buildTypes
+
+
+	applicationVariants.all { variant ->
+			if (variant.buildType.name.equals ( "release" )) {
+				variant.outputs.each { output ->
+					if (output.outputFile != null && output.outputFile.name.endsWith ( '.apk' )) {
+						def date = new Date ();
+						def formattedDate = date.format ( 'yyyy-MM-dd HH:mm' )
+						output.outputFile = new File ( output.outputFile.parent, variant.name + "-${versionName}-" + formattedDate + ".apk" )
+					}
+				}
+			}
+		}
