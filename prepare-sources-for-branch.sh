@@ -9,7 +9,12 @@
 # 
  
 IGNORED=(
-# Add here files
+./src/com/dexode/animation/interpolator/ReverseInterpolator.java
+./src/com/dexode/storage/SecurePreferences.java
+./src/com/dexode/util/DebugUtils.java
+./src/com/dexode/util/LogUtils.java
+./src/com/squareup/okhttp/interceptor/NetworkInterceptor.java
+./src/com/squareup/okhttp/interceptor/LogInterceptor.java
 )
 
 for file in `git ls-files`; do
