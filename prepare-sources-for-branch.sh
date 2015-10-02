@@ -31,6 +31,13 @@ IGNORED=(
 #./src/com/squareup/okhttp/interceptor/LogInterceptor.java
 )
 
+for file in `git ls-files`; do
+	git update-index --no-assume-unchanged $file
+	if [ ! -f "$file" ]; then
+		git checkout -- $file
+	fi
+done
+
 for ignored in ${IGNORED[@]}; do
 	echo "Processing: $ignored"
 	if [ -d "$ignored" ] ; then
