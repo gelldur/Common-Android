@@ -1,6 +1,7 @@
 package com.dexode.util;
 
 import android.os.Environment;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -83,9 +84,8 @@ public class DebugLogs {
 			byte[] bytes;
 			{
 				String string = _stringBuilder.toString();
-				LogUtils.log(string);
 				_stringBuilder.setLength(0);
-				LogUtils.log(string);
+				Log.d("", string);
 				bytes = string.getBytes();
 				string = null;
 			}
