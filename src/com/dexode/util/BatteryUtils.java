@@ -32,6 +32,9 @@ public class BatteryUtils {
 	public static BatteryStatus getBatteryStatus(final Context context) throws BatteryStatusException {
 		Intent batteryIntent =
 				context.getApplicationContext().registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+		if (batteryIntent == null) {
+			throw new BatteryStatusException();
+		}
 		final int level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
 		final int scale = batteryIntent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
 		final int status = batteryIntent.getIntExtra(BatteryManager.EXTRA_STATUS, -1);

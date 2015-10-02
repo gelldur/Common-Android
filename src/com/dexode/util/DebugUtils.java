@@ -55,13 +55,14 @@ public class DebugUtils {
 				Buffer buffer = new Buffer();
 
 				request.body().writeTo(buffer);
-				stringBuilder.append("-d ");
+				stringBuilder.append("-d \"");
 
 				BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(buffer.inputStream()));
 				String line;
 				while ((line = bufferedReader.readLine()) != null) {
-					stringBuilder.append(line);
+					stringBuilder.append(line).append("\\n");
 				}
+				stringBuilder.append("\"");
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

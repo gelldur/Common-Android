@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Date;
 import java.util.Formatter;
 
 /**
@@ -23,8 +24,8 @@ public class DebugLogs {
 		return _instance;
 	}
 
-	public DebugLogs(boolean isDebugable, String outputFileName) {
-		_isDebug = isDebugable;
+	public DebugLogs(boolean isDebug, String outputFileName) {
+		_isDebug = isDebug;
 		if (_isDebug == false) {
 			return;
 		}
@@ -48,6 +49,24 @@ public class DebugLogs {
 	 * @param message
 	 * @param args
 	 */
+	public synchronized static void l(String message, Object... args) {
+		if (_instance == null) {
+			return;
+		}
+		if (_instance._isDebug == false) {
+			return;
+		}
+		_instance.log(message, args);
+	}
+
+	/**
+	 * Use %d for int
+	 * Use %f for float/double
+	 * Use %b for boolean
+	 *
+	 * @param message
+	 * @param args
+	 */
 	public synchronized void log(String message, Object... args) {
 		if (_isDebug == false) {
 			return;
@@ -61,13 +80,41 @@ public class DebugLogs {
 				new Formatter(_stringBuilder).format(message, args);
 			}
 
-			_fileOutputStream.write(_stringBuilder.toString().getBytes());
-			appendNewLine();
+			byte[] bytes;
+			{
+				String string = _stringBuilder.toString();
+				LogUtils.log(string);
+				_stringBuilder.setLength(0);
+				LogUtils.log(string);
+				bytes = string.getBytes();
+				string = null;
+			}
+
+			final int maxChars = 2048;
+			if (bytes.length > maxChars) {
+				for (int i = 0; i < bytes.length; i += maxChars) {
+					_fileOutputStream.write(bytes, i, (i + maxChars) > bytes.length ? (bytes.length - i) : maxChars);
+					_fileOutputStream.write(10);//new line
+				}
+			} else {
+				_fileOutputStream.write(bytes);
+			}
+			_fileOutputStream.write(10);//new line
 
 			_fileOutputStream.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static void logException(Throwable throwable) {
+		if (_instance == null) {
+			return;
+		}
+		if (_instance._isDebug == false) {
+			return;
+		}
+		_instance.printStackTrace(throwable);
 	}
 
 	public synchronized void printStackTrace(Throwable throwable) {
@@ -76,27 +123,24 @@ public class DebugLogs {
 		}
 		PrintStream printStream = new PrintStream(_fileOutputStream);
 		throwable.printStackTrace(printStream);
+		throwable.printStackTrace();
 	}
 
 	private void appendTime() throws IOException {
 		if (_isDebug == false) {
 			return;
 		}
-		String fullDate = TimeFormatter.getFullDate(System.currentTimeMillis());
+		_date.setTime(System.currentTimeMillis());
+		String fullDate = _fullTime.format(_date);
 		fullDate += ":\t";
 		_fileOutputStream.write(fullDate.getBytes());
 	}
 
-	private void appendNewLine() throws IOException {
-		if (_isDebug == false) {
-			return;
-		}
-		_fileOutputStream.write("\n".getBytes());
-	}
-
-	public final boolean _isDebug;
+	private final boolean _isDebug;
 	private static DebugLogs _instance;
 	private StringBuilder _stringBuilder = new StringBuilder(1024);
 	private FileOutputStream _fileOutputStream;
 	private File _outputFile;
+	private Date _date = new Date();
+	java.text.SimpleDateFormat _fullTime = new java.text.SimpleDateFormat("dd.MM.yyyy HH:mm:ss:SSS");
 }
