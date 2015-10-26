@@ -6,10 +6,14 @@
 # You can simply add git hook.
 #
 # How to add git hook: https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks
-# 
- 
+#
+
 IGNORED=(
-# Add here files
+./src/com/dexode/animation/interpolator/ReverseInterpolator.java
+./src/com/dexode/util/BitmapUtils.java
+./src/com/dexode/util/ApplicationContext.java
+./src/com/dexode/util/BatteryUtils.java
+./src/com/dexode/util/Validator.java
 )
 
 for file in `git ls-files`; do
