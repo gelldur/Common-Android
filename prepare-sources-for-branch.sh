@@ -9,7 +9,26 @@
 # 
  
 IGNORED=(
-# Add here files
+./src/com/dexode/animation/interpolator/ReverseInterpolator.java
+./src/com/dexode/fragment/FullscreenFragment.java
+./src/com/dexode/storage/SecurePreferences.java
+./src/com/dexode/util/Utils.java
+#./src/com/dexode/util/DebugUtils.java
+./src/com/dexode/util/DeviceId.java
+./src/com/dexode/util/Validator.java
+./src/com/dexode/util/BitmapUtils.java
+./src/com/dexode/util/BatteryUtils.java
+./src/com/dexode/util/ShareIntentBuilder.java
+#./src/com/dexode/util/LogUtils.java
+./src/com/dexode/util/ApplicationContext.java
+./src/com/dexode/util/FragmentUtils.java
+./src/com/dexode/util/InternetUtils.java
+./src/com/dexode/util/DebugLogs.java
+./src/com/dexode/adapter/ViewHolderAdapterHelper.java
+./src/com/dexode/adapter/BaseAdapter.java
+./src/com/squareup/picasso/CacheHelper.java
+#./src/com/squareup/okhttp/interceptor/NetworkInterceptor.java
+#./src/com/squareup/okhttp/interceptor/LogInterceptor.java
 )
 
 for file in `git ls-files`; do
