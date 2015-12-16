@@ -85,7 +85,7 @@ public class DebugLogs {
 			{
 				String string = _stringBuilder.toString();
 				_stringBuilder.setLength(0);
-				Log.d("", string);
+				Log.d("DEBUG", string);
 				bytes = string.getBytes();
 				string = null;
 			}
