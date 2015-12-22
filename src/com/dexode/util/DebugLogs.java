@@ -1,6 +1,7 @@
 package com.dexode.util;
 
 import android.os.Environment;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.io.File;
@@ -25,20 +26,21 @@ public class DebugLogs {
 		return _instance;
 	}
 
-	public DebugLogs(boolean isDebug, String outputFileName) {
+	public DebugLogs(boolean isDebug, @Nullable String outputFileName) {
 		_isDebug = isDebug;
 		if (_isDebug == false) {
 			return;
 		}
-
-		try {
-			_outputFile = new File(Environment.getExternalStorageDirectory(), outputFileName);
-			if (_outputFile.exists() == false) {
-				_outputFile.createNewFile();
+		if (outputFileName != null) {
+			try {
+				_outputFile = new File(Environment.getExternalStorageDirectory(), outputFileName);
+				if (_outputFile.exists() == false) {
+					_outputFile.createNewFile();
+				}
+				_fileOutputStream = new FileOutputStream(_outputFile, true);
+			} catch (Exception ex) {
+				ex.printStackTrace();
 			}
-			_fileOutputStream = new FileOutputStream(_outputFile, true);
-		} catch (Exception ex) {
-			throw new RuntimeException("I don't care!");
 		}
 	}
 
@@ -73,7 +75,6 @@ public class DebugLogs {
 			return;
 		}
 		try {
-			appendTime();
 			_stringBuilder.setLength(0);
 			if (args == null || args.length < 1) {
 				_stringBuilder.append(message);
@@ -90,18 +91,22 @@ public class DebugLogs {
 				string = null;
 			}
 
-			final int maxChars = 2048;
-			if (bytes.length > maxChars) {
-				for (int i = 0; i < bytes.length; i += maxChars) {
-					_fileOutputStream.write(bytes, i, (i + maxChars) > bytes.length ? (bytes.length - i) : maxChars);
-					_fileOutputStream.write(10);//new line
+			if (_fileOutputStream != null) {
+				appendTime();
+				final int maxChars = 2048;
+				if (bytes.length > maxChars) {
+					for (int i = 0; i < bytes.length; i += maxChars) {
+						_fileOutputStream.write(bytes, i,
+												(i + maxChars) > bytes.length ? (bytes.length - i) : maxChars);
+						_fileOutputStream.write(10);//new line
+					}
+				} else {
+					_fileOutputStream.write(bytes);
 				}
-			} else {
-				_fileOutputStream.write(bytes);
-			}
-			_fileOutputStream.write(10);//new line
+				_fileOutputStream.write(10);//new line
 
-			_fileOutputStream.flush();
+				_fileOutputStream.flush();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -121,8 +126,10 @@ public class DebugLogs {
 		if (_isDebug == false) {
 			return;
 		}
-		PrintStream printStream = new PrintStream(_fileOutputStream);
-		throwable.printStackTrace(printStream);
+		if (_fileOutputStream != null) {
+			PrintStream printStream = new PrintStream(_fileOutputStream);
+			throwable.printStackTrace(printStream);
+		}
 		throwable.printStackTrace();
 	}
 
@@ -133,13 +140,16 @@ public class DebugLogs {
 		_date.setTime(System.currentTimeMillis());
 		String fullDate = _fullTime.format(_date);
 		fullDate += ":\t";
+		assert _fileOutputStream != null;
 		_fileOutputStream.write(fullDate.getBytes());
 	}
 
 	private final boolean _isDebug;
 	private static DebugLogs _instance;
 	private StringBuilder _stringBuilder = new StringBuilder(1024);
+	@Nullable
 	private FileOutputStream _fileOutputStream;
+	@Nullable
 	private File _outputFile;
 	private Date _date = new Date();
 	java.text.SimpleDateFormat _fullTime = new java.text.SimpleDateFormat("dd.MM.yyyy HH:mm:ss:SSS");
