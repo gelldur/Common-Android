@@ -19,7 +19,7 @@ import okio.Buffer;
  * This code should be used only for debug purposes.
  */
 public class DebugUtils {
-	public static String streamToString(final InputStream inputStream) throws Exception {
+	public static String streamToString(final InputStream inputStream) throws IOException {
 		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 		StringBuilder builder = new StringBuilder();
 		String line;
