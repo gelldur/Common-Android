@@ -1,7 +1,10 @@
 package com.dexode.adapter;
 
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.dexode.util.Assert;
 
 /**
  * Created by Dawid Drozd aka Gelldur on 09.02.15.
@@ -24,7 +27,9 @@ public class ViewHolderAdapterHelper {
 			holder = convertView.getTag();
 		}
 
-		return _adapter.setHolder(holder, convertView, parent, position);
+		final View view = _adapter.setHolder(holder, convertView, parent, position);
+		Assert.check(view != null, "setHolder must return view");
+		return view;
 	}
 
 	public static interface Adapter {
@@ -34,6 +39,7 @@ public class ViewHolderAdapterHelper {
 		 *
 		 * @return new inflated view
 		 */
+		@NonNull
 		public View getInflatedRow(int position, ViewGroup parent);
 
 		/**
@@ -41,6 +47,7 @@ public class ViewHolderAdapterHelper {
 		 *
 		 * @return
 		 */
+		@NonNull
 		public Object getNewHolder(int position);
 
 		/**
@@ -52,6 +59,7 @@ public class ViewHolderAdapterHelper {
 		 *
 		 * @return return @param view or other view
 		 */
+		@NonNull
 		public View setHolder(Object yourHolder, View view, ViewGroup parent, int position);
 
 		/**
