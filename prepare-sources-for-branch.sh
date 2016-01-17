@@ -7,8 +7,8 @@
 # You can simply add git hook.
 #
 # How to add git hook: https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks
-# 
- 
+#
+
 NOT_REMOVED=(
 com/dexode/util/DebugUtils.java
 com/dexode/util/log/Logger.java
@@ -23,7 +23,7 @@ for file in `git ls-files`; do
 	if [ ! -f "$file" ]; then
 		git checkout -- $file
 	fi
-	
+
 	if [[ ${NOT_REMOVED[*]} =~ "$file" ]]
 	then
 		echo "Skipping $file"
