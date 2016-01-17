@@ -1,0 +1,4 @@
+#!/bin/bash
+
+find . -name "prepare-sources-for-branch.sh" | xargs bash $1 
+

@@ -1,6 +1,6 @@
 package com.squareup.okhttp.interceptor;
 
-import com.dexode.util.LogUtils;
+import com.dexode.util.log.Logger;
 import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.Request;
@@ -43,26 +43,24 @@ public class LogInterceptor implements Interceptor {
 
 		double time = (t2 - t1) / 1e6d;
 
-		LogUtils.log(
+		Logger.i(
 				"okhttp ##################################################################################################");
 
 		if (request.method().equals("GET")) {
-			LogUtils.log(
-					String.format("okhttp GET " + F_REQUEST_WITHOUT_BODY + F_RESPONSE_WITH_BODY, request.url(), time,
-								  request.headers(), response.code(), response.headers(),
-								  stringifyResponseBody(bodyString)));
+			Logger.i(String.format("okhttp GET " + F_REQUEST_WITHOUT_BODY + F_RESPONSE_WITH_BODY, request.url(), time,
+								   request.headers(), response.code(), response.headers(), stringifyResponseBody(
+							 bodyString)));
 		} else if (request.method().equals("POST")) {
-			LogUtils.log(String.format("okhttp POST " + F_REQUEST_WITH_BODY + F_RESPONSE_WITH_BODY, request.url(), time,
-									   request.headers(), stringifyRequestBody(request), response.code(),
-									   response.headers(), stringifyResponseBody(bodyString)));
+			Logger.i(String.format("okhttp POST " + F_REQUEST_WITH_BODY + F_RESPONSE_WITH_BODY, request.url(), time,
+								   request.headers(), stringifyRequestBody(request), response.code(),
+								   response.headers(), stringifyResponseBody(bodyString)));
 		} else if (request.method().equals("PUT")) {
-			LogUtils.log(String.format("okhttp PUT " + F_REQUEST_WITH_BODY + F_RESPONSE_WITH_BODY, request.url(), time,
-									   request.headers(), request.body().toString(), response.code(),
-									   response.headers(), stringifyResponseBody(bodyString)));
+			Logger.i(String.format("okhttp PUT " + F_REQUEST_WITH_BODY + F_RESPONSE_WITH_BODY, request.url(), time,
+								   request.headers(), request.body().toString(), response.code(), response.headers(),
+								   stringifyResponseBody(bodyString)));
 		} else if (request.method().equals("DELETE")) {
-			LogUtils.log(
-					String.format("okhttp DELETE " + F_REQUEST_WITHOUT_BODY + F_RESPONSE_WITHOUT_BODY, request.url(),
-								  time, request.headers(), response.code(), response.headers()));
+			Logger.i(String.format("okhttp DELETE " + F_REQUEST_WITHOUT_BODY + F_RESPONSE_WITHOUT_BODY, request.url(),
+								   time, request.headers(), response.code(), response.headers()));
 		}
 
 		if (response.body() != null) {
