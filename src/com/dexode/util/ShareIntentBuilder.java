@@ -8,8 +8,8 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
+import com.dexode.util.log.Logger;
 import com.google.android.gms.plus.PlusShare;
 
 import java.util.ArrayList;
@@ -119,7 +119,7 @@ public class ShareIntentBuilder {
 		}
 
 		if (mainIntent == null) {
-			Log.e(ShareIntentBuilder.class.getSimpleName(), "No app can't handle such share request");
+			Logger.e("No app can't handle such share request");
 			throw new NoShareIntentsException("No app can't handle such share request");
 		}
 
