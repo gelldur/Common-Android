@@ -10,7 +10,19 @@
 # 
  
 NOT_REMOVED=(
-
+com/dexode/service/RunnableWithParams.java
+com/dexode/service/WorkerService.java
+com/dexode/util/Validator.java
+com/dexode/fragment/FullscreenFragment.java
+com/dexode/util/DeviceId.java
+com/dexode/util/Utils.java
+com/dexode/adapter/ViewHolderAdapterHelper.java
+com/dexode/adapter/BaseAdapter.java
+com/dexode/util/Assert.java
+com/dexode/util/BatteryUtils.java
+com/dexode/util/FragmentUtils.java
+com/dexode/util/ShareIntentBuilder.java
+com/squareup/picasso/CacheHelper.java
 )
 
 cd ./src
