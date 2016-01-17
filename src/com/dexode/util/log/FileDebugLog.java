@@ -1,4 +1,4 @@
-package com.dexode.util;
+package com.dexode.util.log;
 
 import android.os.Environment;
 import android.support.annotation.Nullable;
@@ -13,80 +13,108 @@ import java.util.Formatter;
 
 /**
  * Created by Dawid Drozd aka Gelldur on 9/15/15.
- * This class shouldn't work in release mode. You should strip this code by proguard :)
+ * This class shouldn't work in release mode. You should remove this code by proguard :)
  * This code should be used only for debug purposes.
  */
-public class DebugLogs {
+public class FileDebugLog implements Logger.Log {
 
-	public synchronized static void setInstance(DebugLogs debugLogs) {
-		_instance = debugLogs;
-	}
-
-	public synchronized static DebugLogs getInstance() {
-		return _instance;
-	}
-
-	public DebugLogs(boolean isDebug, @Nullable String outputFileName) {
-		_isDebug = isDebug;
-		if (_isDebug == false) {
-			return;
-		}
+	public FileDebugLog(boolean isQuiet, @Nullable String outputFileName) throws IOException {
+		_isQuiet = isQuiet;
 		if (outputFileName != null) {
-			try {
-				_outputFile = new File(Environment.getExternalStorageDirectory(), outputFileName);
-				if (_outputFile.exists() == false) {
-					_outputFile.createNewFile();
-				}
-				_fileOutputStream = new FileOutputStream(_outputFile, true);
-			} catch (Exception ex) {
-				ex.printStackTrace();
+			_outputFile = new File(Environment.getExternalStorageDirectory(), outputFileName);
+			if (_outputFile.exists() == false) {
+				_outputFile.createNewFile();
 			}
+			_fileOutputStream = new FileOutputStream(_outputFile, true);
 		}
 	}
 
+
 	/**
-	 * Use %d for int
-	 * Use %f for float/double
-	 * Use %b for boolean
+	 * {@inheritDoc}
+	 * <p/>
+	 * Use %d for int <br>
+	 * Use %f for float/double <br>
+	 * Use %b for boolean <br>
 	 *
-	 * @param message
+	 * @param text
 	 * @param args
 	 */
-	public synchronized static void l(String message, Object... args) {
-		if (_instance == null) {
-			return;
-		}
-		if (_instance._isDebug == false) {
-			return;
-		}
-		_instance.log(message, args);
+	@Override
+	public void i(final String text, final Object... args) {
+		d(text, args);
 	}
 
 	/**
-	 * Use %d for int
-	 * Use %f for float/double
-	 * Use %b for boolean
+	 * {@inheritDoc}
+	 * <p/>
+	 * Use %d for int <br>
+	 * Use %f for float/double <br>
+	 * Use %b for boolean <br>
 	 *
-	 * @param message
+	 * @param text
 	 * @param args
 	 */
-	public synchronized void log(String message, Object... args) {
-		if (_isDebug == false) {
-			return;
-		}
+	@Override
+	public void w(final String text, final Object... args) {
+		d(text, args);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * Use %d for int <br>
+	 * Use %f for float/double <br>
+	 * Use %b for boolean <br>
+	 *
+	 * @param text
+	 * @param args
+	 */
+	@Override
+	public void e(final String text, final Object... args) {
+		d(text, args);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 *
+	 * @param exception
+	 * @param text
+	 */
+	@Override
+	public void e(final Exception exception, @Nullable final String text) {
+		d(text);
+		printStackTrace(exception);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * Use %d for int <br>
+	 * Use %f for float/double <br>
+	 * Use %b for boolean <br>
+	 *
+	 * @param text
+	 * @param args
+	 */
+	@Override
+	public void d(final String text, final Object... args) {
 		try {
 			_stringBuilder.setLength(0);
 			if (args == null || args.length < 1) {
-				_stringBuilder.append(message);
+				_stringBuilder.append(text);
 			} else {
-				new Formatter(_stringBuilder).format(message, args);
+				new Formatter(_stringBuilder).format(text, args);
 			}
 
 			byte[] bytes;
 			{
 				String string = _stringBuilder.toString();
 				_stringBuilder.setLength(0);
-				Log.d("DEBUG", string);
+				if (_isQuiet == false) {
+					Log.d("DEBUG", string);
+				}
 				bytes = string.getBytes();
 				string = null;
 			}
@@ -112,20 +140,7 @@ public class DebugLogs {
 		}
 	}
 
-	public static void logException(Throwable throwable) {
-		if (_instance == null) {
-			return;
-		}
-		if (_instance._isDebug == false) {
-			return;
-		}
-		_instance.printStackTrace(throwable);
-	}
-
 	public synchronized void printStackTrace(Throwable throwable) {
-		if (_isDebug == false) {
-			return;
-		}
 		if (_fileOutputStream != null) {
 			PrintStream printStream = new PrintStream(_fileOutputStream);
 			throwable.printStackTrace(printStream);
@@ -134,9 +149,6 @@ public class DebugLogs {
 	}
 
 	private void appendTime() throws IOException {
-		if (_isDebug == false) {
-			return;
-		}
 		_date.setTime(System.currentTimeMillis());
 		String fullDate = _fullTime.format(_date);
 		fullDate += ":\t";
@@ -144,8 +156,11 @@ public class DebugLogs {
 		_fileOutputStream.write(fullDate.getBytes());
 	}
 
-	private final boolean _isDebug;
-	private static DebugLogs _instance;
+	public boolean isQuiet() {
+		return _isQuiet;
+	}
+
+	private final boolean _isQuiet;
 	private StringBuilder _stringBuilder = new StringBuilder(1024);
 	@Nullable
 	private FileOutputStream _fileOutputStream;
