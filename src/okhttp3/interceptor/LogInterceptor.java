@@ -1,21 +1,20 @@
-package com.squareup.okhttp.interceptor;
+package okhttp3.interceptor;
 
 import com.dexode.util.log.Logger;
-import com.squareup.okhttp.Interceptor;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
-import com.squareup.okhttp.ResponseBody;
 
 import java.io.IOException;
 
+import okhttp3.Interceptor;
+import okhttp3.MediaType;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 import okio.Buffer;
 
 /**
- * This class is no long supported. Please use one in okhttp3 package.
+ * Created by Dawid Drozd aka Gelldur on 25.01.16.
  */
 public class LogInterceptor implements Interceptor {
-
 	private static final String F_BREAK = " %n";
 	private static final String F_URL = " %s";
 	private static final String F_TIME = " in %.1fms";
@@ -52,7 +51,7 @@ public class LogInterceptor implements Interceptor {
 		if (request.method().equals("GET")) {
 			Logger.i(String.format("okhttp GET " + F_REQUEST_WITHOUT_BODY + F_RESPONSE_WITH_BODY, request.url(), time,
 								   request.headers(), response.code(), response.headers(), stringifyResponseBody(
-							 bodyString)));
+							bodyString)));
 		} else if (request.method().equals("POST")) {
 			Logger.i(String.format("okhttp POST " + F_REQUEST_WITH_BODY + F_RESPONSE_WITH_BODY, request.url(), time,
 								   request.headers(), stringifyRequestBody(request), response.code(),
