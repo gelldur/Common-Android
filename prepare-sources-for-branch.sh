@@ -18,7 +18,7 @@ com/dexode/adapter/BaseAdapter.java
 com/dexode/adapter/ViewHolderAdapterHelper.java
 com/dexode/util/Assert.java
 com/dexode/util/DebugUtils.java
-com/squareup/okhttp/interceptor/LogInterceptor.java
+okhttp3/interceptor/LogInterceptor.java
 )
 
 cd ./src
