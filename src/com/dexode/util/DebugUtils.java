@@ -2,15 +2,14 @@ package com.dexode.util;
 
 import android.os.Bundle;
 
-import com.squareup.okhttp.Headers;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import okhttp3.Headers;
+import okhttp3.Request;
+import okhttp3.Response;
 import okio.Buffer;
 
 /**
@@ -67,7 +66,7 @@ public class DebugUtils {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		stringBuilder.append(" \"").append(request.urlString()).append("\"");
+		stringBuilder.append(" \"").append(request.url().toString()).append("\"");
 
 		return stringBuilder.toString();
 	}
