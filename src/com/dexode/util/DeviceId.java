@@ -16,6 +16,8 @@ import android.provider.Settings.Secure;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.dexode.util.log.Logger;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -33,8 +35,7 @@ public class DeviceId {
 				return deviceId;
 			}
 		} else {
-			Log.i(DeviceId.class.getSimpleName(),
-				  "Please set android.permission.ACCESS_WIFI_STATE permission to get better user id");
+			Logger.i("Please set android.permission.ACCESS_WIFI_STATE permission to get better user id");
 		}
 
 		if (deviceId == null && checkPermission(appContext, "android.permission.BLUETOOTH")) {
@@ -43,15 +44,14 @@ public class DeviceId {
 				return deviceId;
 			}
 		} else {
-			Log.i(DeviceId.class.getSimpleName(),
-				  "Please set android.permission.BLUETOOTH permission to get better user id");
+			Logger.i("Please set android.permission.BLUETOOTH permission to get better user id");
 		}
 
 		deviceId = getAndroidId(appContext);
 
 		// This shouldn't happen
 		if (deviceId == null) {
-			Log.e(DeviceId.class.getSimpleName(), "Can't get device ID !");
+			Logger.e("Can't get device ID!");
 			throw new RuntimeException("Problems during getting ID");
 		}
 
