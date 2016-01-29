@@ -11,6 +11,7 @@
  
 NOT_REMOVED=(
 com/dexode/util/log/Logger.java
+com/dexode/util/log/FileDebugLog.java
 com/dexode/service/WorkerService.java
 com/dexode/service/RunnableWithParams.java
 com/dexode/util/Utils.java
