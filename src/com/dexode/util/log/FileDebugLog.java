@@ -84,7 +84,9 @@ public class FileDebugLog implements Logger.Log {
 	 */
 	@Override
 	public void e(final Exception exception, @Nullable final String text) {
-		d(text);
+		if (text != null) {
+			d(text);
+		}
 		printStackTrace(exception);
 	}
 
