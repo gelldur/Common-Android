@@ -8,17 +8,22 @@
 #
 # How to add git hook: https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks
 #
- 
+
 NOT_REMOVED=(
 com/dexode/util/log/Logger.java
 com/dexode/util/log/FileDebugLog.java
 com/dexode/service/WorkerService.java
 com/dexode/service/RunnableWithParams.java
 com/dexode/util/Utils.java
+com/dexode/util/DeviceId.java
 com/dexode/adapter/BaseAdapter.java
 com/dexode/adapter/ViewHolderAdapterHelper.java
 com/dexode/util/Assert.java
 com/dexode/util/DebugUtils.java
+com/dexode/util/Validator.java
+com/dexode/util/UtilsHash.java
+com/dexode/util/RecyclerViewHelper.java
+com/dexode/storage/SecurePreferences.java
 okhttp3/interceptor/LogInterceptor.java
 )
 
@@ -29,7 +34,7 @@ for file in `git ls-files`; do
 	if [ ! -f "$file" ]; then
 		git checkout -- $file
 	fi
-	
+
 	if [[ ${NOT_REMOVED[*]} =~ "$file" ]]
 	then
 		echo "Skipping $file"
