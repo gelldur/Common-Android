@@ -10,7 +10,14 @@
 # 
  
 NOT_REMOVED=(
-# Add here files
+com/dexode/util/log/FileDebugLog.java
+com/dexode/util/log/Logger.java
+com/dexode/util/Utils.java
+com/dexode/util/DeviceId.java
+com/dexode/util/Assert.java
+com/dexode/util/DebugUtils.java
+com/dexode/util/UtilsHash.java
+okhttp3/interceptor/LogInterceptor.java
 )
 
 cd ./src
