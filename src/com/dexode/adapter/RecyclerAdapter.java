@@ -10,11 +10,12 @@ import android.view.ViewGroup;
 import com.dexode.adapter.holder.BaseHolder;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Dawid Drozd aka Gelldur on 16.02.16.
  */
-public abstract class RecyclerAdapter extends RecyclerView.Adapter<BaseHolder> {
+public class RecyclerAdapter extends RecyclerView.Adapter<BaseHolder> {
 
 	public RecyclerAdapter(final Activity activity) {
 		_layoutInflater = activity.getLayoutInflater();
@@ -45,21 +46,83 @@ public abstract class RecyclerAdapter extends RecyclerView.Adapter<BaseHolder> {
 		return _elements.size();
 	}
 
+	public int getItemTypeCount(final int type) {
+		int count = 0;
+		for (Element element : _elements) {
+			if (element.layoutId == type) {
+				++count;
+			}
+		}
+		return count;
+	}
+
+	public boolean isItemTypePresent(final int type) {
+		for (Element element : _elements) {
+			if (element.layoutId == type) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public void addViewHolderCreator(int viewType, ViewHolderCreator creator) {
 		_holderCreators.put(viewType, creator);
 	}
 
 	public void addElementAndHolderCreator(Element element, ViewHolderCreator creator) {
-		_elements.add(element);
 		addViewHolderCreator(element.layoutId, creator);
+		addElement(element);
 	}
 
 	protected LayoutInflater getLayoutInflater() {
 		return _layoutInflater;
 	}
 
+	public void insertElement(int position, Element element) {
+		_elements.add(position, element);
+		notifyItemInserted(position);
+	}
+
 	public void addElement(Element element) {
-		_elements.add(element);
+		if (_elements.add(element)) {
+			notifyItemInserted(_elements.size() - 1);
+		}
+	}
+
+	public void addAllElements(final ArrayList<Element> elements) {
+		int insertPosition = _elements.size();
+		_elements.addAll(elements);
+		notifyItemRangeInserted(insertPosition, elements.size());
+	}
+
+	protected void setElements(ArrayList<Element> elements) {
+		_elements = elements;
+	}
+
+	public int removeAllByType(int type) {
+		ArrayList<Element> filteredElements = new ArrayList<>(_elements.size());
+		for (int i = 0; i < _elements.size(); ++i) {
+			Element element = _elements.get(i);
+			if (element.layoutId != type) {
+				filteredElements.add(element);
+			} else {
+				notifyItemRemoved(i);
+			}
+		}
+		_elements = filteredElements;
+		return _elements.size();
+	}
+
+	public static ArrayList<Element> createArray(final int type, List<?> data) {
+		ArrayList<Element> elements = new ArrayList<>(data.size());
+		for (Object object : data) {
+			elements.add(new Element(type, object));
+		}
+		return elements;
+	}
+
+	protected ArrayList<Element> getElements() {
+		return _elements;
 	}
 
 	private ArrayList<Element> _elements = new ArrayList<>();
