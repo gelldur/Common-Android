@@ -15,6 +15,7 @@ import java.util.List;
 /**
  * Created by Dawid Drozd aka Gelldur on 16.02.16.
  */
+//TODO need refactor
 public class RecyclerAdapter extends RecyclerView.Adapter<BaseHolder> {
 
 	public RecyclerAdapter(final Activity activity) {
@@ -71,7 +72,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<BaseHolder> {
 
 	public void addElementAndHolderCreator(Element element, ViewHolderCreator creator) {
 		addViewHolderCreator(element.layoutId, creator);
-		addElement(element);
+		addElement(element, true);
 	}
 
 	protected LayoutInflater getLayoutInflater() {
@@ -83,29 +84,34 @@ public class RecyclerAdapter extends RecyclerView.Adapter<BaseHolder> {
 		notifyItemInserted(position);
 	}
 
-	public void addElement(Element element) {
+	public void addElement(Element element, boolean notify) {
 		if (_elements.add(element)) {
-			notifyItemInserted(_elements.size() - 1);
+			if (notify) {
+				notifyItemInserted(_elements.size() - 1);
+			}
 		}
 	}
 
-	public void addAllElements(final ArrayList<Element> elements) {
+	public void addAllElements(final ArrayList<Element> elements, boolean notify) {
 		int insertPosition = _elements.size();
 		_elements.addAll(elements);
-		notifyItemRangeInserted(insertPosition, elements.size());
+		if (notify) {
+			notifyItemRangeInserted(insertPosition, elements.size());
+		}
 	}
 
 	protected void setElements(ArrayList<Element> elements) {
 		_elements = elements;
 	}
 
-	public int removeAllByType(int type) {
+	//TODO REFACTOR
+	public int removeAllByType(int type, boolean notify) {
 		ArrayList<Element> filteredElements = new ArrayList<>(_elements.size());
 		for (int i = 0; i < _elements.size(); ++i) {
 			Element element = _elements.get(i);
 			if (element.layoutId != type) {
 				filteredElements.add(element);
-			} else {
+			} else if (notify) {
 				notifyItemRemoved(i);
 			}
 		}
