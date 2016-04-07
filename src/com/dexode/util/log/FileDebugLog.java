@@ -25,6 +25,7 @@ public class FileDebugLog implements Logger.Log {
 			if (_outputFile.exists() == false) {
 				_outputFile.createNewFile();
 			}
+			_outputFile.setReadable(true,false);
 			_fileOutputStream = new FileOutputStream(_outputFile, true);
 		}
 	}
