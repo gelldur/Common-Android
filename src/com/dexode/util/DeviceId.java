@@ -16,6 +16,7 @@ import android.os.Environment;
 import android.provider.Settings.Secure;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.dexode.util.log.Logger;
@@ -148,8 +149,7 @@ public class DeviceId {
 	}
 
 	public static boolean checkPermission(Context appContext, String permission) {
-		int res = appContext.checkCallingOrSelfPermission(permission);
-		return (res == PackageManager.PERMISSION_GRANTED);
+		return ContextCompat.checkSelfPermission(appContext, permission) == PackageManager.PERMISSION_GRANTED;
 	}
 
 	@Nullable
