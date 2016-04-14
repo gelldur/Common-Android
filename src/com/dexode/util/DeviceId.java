@@ -4,6 +4,7 @@ package com.dexode.util;
  * Created by Dawid Drozd aka Gelldur on 23.02.15.
  */
 
+import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.bluetooth.BluetoothAdapter;
@@ -13,6 +14,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Environment;
 import android.provider.Settings.Secure;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -23,14 +25,25 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 public class DeviceId {
 
+	@NonNull
 	public static String getDeviceId(Context appContext) throws RuntimeException {
+		final String deviceId = getDeviceIdBestFit(appContext);
+		return deviceId.toLowerCase();
+	}
+
+	@NonNull
+	private static String getDeviceIdBestFit(Context appContext) throws RuntimeException {
 		String deviceId = null;
-		if (deviceId == null && checkPermission(appContext, "android.permission.ACCESS_WIFI_STATE")) {
-			deviceId = getWiFiMacAdress(appContext);
+		if (deviceId == null && checkPermission(appContext, Manifest.permission.ACCESS_WIFI_STATE)) {
+			deviceId = getWiFiMacAddress(appContext);
 			if (deviceId != null) {
 				return deviceId;
 			}
@@ -38,8 +51,8 @@ public class DeviceId {
 			Logger.i("Please set android.permission.ACCESS_WIFI_STATE permission to get better user id");
 		}
 
-		if (deviceId == null && checkPermission(appContext, "android.permission.BLUETOOTH")) {
-			deviceId = getBluetoothMacAdress(appContext);
+		if (deviceId == null && checkPermission(appContext, Manifest.permission.BLUETOOTH)) {
+			deviceId = getBluetoothMacAddress(appContext);
 			if (deviceId != null) {
 				return deviceId;
 			}
@@ -51,15 +64,15 @@ public class DeviceId {
 
 		// This shouldn't happen
 		if (deviceId == null) {
-			Logger.e("Can't get device ID!");
-			throw new RuntimeException("Problems during getting ID");
+			Logger.e("Can't get device ID! Using random ID");
+			return generateRandomId();
 		}
 
 		return deviceId;
 	}
 
 	public static void backupFile(Context appContext, String folderName, String fileName, String deviceId) {
-		if (checkPermission(appContext, "android.permission.WRITE_EXTERNAL_STORAGE") == false) {
+		if (checkPermission(appContext, Manifest.permission.WRITE_EXTERNAL_STORAGE) == false) {
 			return;
 		}
 		String root = Environment.getExternalStorageDirectory().toString();
@@ -74,6 +87,7 @@ public class DeviceId {
 			File file = new File(directory, fileName);
 			if (file.exists() == false) {
 				file.createNewFile();
+				file.setReadable(true, false);
 			}
 
 			out = new FileOutputStream(file);
@@ -94,7 +108,7 @@ public class DeviceId {
 
 	@Nullable
 	public static String readFromBuckup(Context appContext, String folderName, String fileName) {
-		if (checkPermission(appContext, "android.permission.READ_EXTERNAL_STORAGE") == false) {
+		if (checkPermission(appContext, Manifest.permission.READ_EXTERNAL_STORAGE) == false) {
 			return null;
 		}
 		String root = Environment.getExternalStorageDirectory().toString();
@@ -138,7 +152,8 @@ public class DeviceId {
 		return (res == PackageManager.PERMISSION_GRANTED);
 	}
 
-	public static String getWiFiMacAdress(Context appContext) {
+	@Nullable
+	public static String getWiFiMacAddress(Context appContext) {
 		WifiManager wifiManager = (WifiManager) appContext.getSystemService(Context.WIFI_SERVICE);
 		if (wifiManager == null) {
 			return null;
@@ -149,10 +164,55 @@ public class DeviceId {
 			return null;
 		}
 
-		return connectionInfo.getMacAddress();
+		String macAddress = connectionInfo.getMacAddress();
+		//Check for mocked value
+		if (isMockedAddress(macAddress)) {
+			macAddress = null;
+		}
+
+		if (macAddress == null && checkPermission(appContext, Manifest.permission.INTERNET)) {
+			try {
+				macAddress = getWiFiMacAddressHack_1();
+				if (isMockedAddress(macAddress)) {
+					macAddress = null;
+				}
+			} catch (SocketException e) {
+				Logger.e(e);
+			}
+		}
+
+		return macAddress;
 	}
 
-	public static String getBluetoothMacAdress(Context appContext) {
+	@Nullable
+	private static String getWiFiMacAddressHack_1() throws SocketException {
+		List<NetworkInterface> networkInterfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
+		for (NetworkInterface networkInterface : networkInterfaces) {
+			if (networkInterface.getName().equalsIgnoreCase("wlan0") == false) {
+				continue;
+			}
+
+			byte[] macBytes = networkInterface.getHardwareAddress();
+			if (macBytes == null) {
+				return null;
+			}
+
+			StringBuilder builder = new StringBuilder();
+			for (byte oneByte : macBytes) {
+				builder.append(String.format("%02X:", (oneByte & 0xFF)));
+			}
+
+			if (builder.length() > 0) {
+				builder.deleteCharAt(builder.length() - 1);
+			}
+			return builder.toString();
+		}
+		return null;
+	}
+
+	@SuppressWarnings("MissingPermission")
+	@Nullable
+	public static String getBluetoothMacAddress(Context appContext) {
 		BluetoothAdapter adapter = null;
 		try {
 			adapter = BluetoothAdapter.getDefaultAdapter();
@@ -165,7 +225,12 @@ public class DeviceId {
 			return null;
 		}
 		if (adapter != null) {
-			return adapter.getAddress();
+			final String macAddress = adapter.getAddress();
+			//Check for mocked value
+			if (isMockedAddress(macAddress)) {
+				return null;
+			}
+			return macAddress;
 		} else {
 			Log.w(DeviceId.class.getSimpleName(), "No bluetooth adapter");
 			return null;
@@ -176,8 +241,9 @@ public class DeviceId {
 		return Secure.getString(appContext.getContentResolver(), Secure.ANDROID_ID);
 	}
 
+	@SuppressWarnings("MissingPermission")
 	public static String getAccountId(Context appContext) {
-		if (checkPermission(appContext, "android.permission.GET_ACCOUNTS") == false) {
+		if (checkPermission(appContext, Manifest.permission.GET_ACCOUNTS) == false) {
 			Log.w(DeviceId.class.getSimpleName(),
 				  "Please set android.permission.GET_ACCOUNTS permission to get accountId");
 			return null;
@@ -195,5 +261,9 @@ public class DeviceId {
 		}
 
 		return null;
+	}
+
+	private static boolean isMockedAddress(@Nullable final String macAddress) {
+		return macAddress == null || macAddress.equals("02:00:00:00:00:00");
 	}
 }
