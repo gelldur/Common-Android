@@ -25,6 +25,8 @@ com/dexode/util/Assert.java
 com/dexode/util/DebugUtils.java
 com/dexode/util/Validator.java
 com/dexode/util/UtilsHash.java
+com/dexode/util/FragmentUtils.java
+com/dexode/util/ShareIntentBuilder.java
 com/dexode/util/RecyclerViewHelper.java
 com/dexode/storage/SecurePreferences.java
 okhttp3/interceptor/LogInterceptor.java
