@@ -95,7 +95,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<BaseHolder> {
 		insertElement(position, element);
 	}
 
-	public void update(int position) {
+	public void update(int position, Object data) {
+		_elements.get(position).data = data;
 		_commandManager.update(position, getId(_elements.get(position)));
 	}
 

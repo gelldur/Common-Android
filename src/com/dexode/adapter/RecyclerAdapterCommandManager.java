@@ -85,14 +85,18 @@ public class RecyclerAdapterCommandManager {
 	}
 
 	public void commit() {
-		if (_changes == null) {
-			return;
+		if (_changes != null) {
+			process();
+			_stable = _changes;
 		}
 
-		process();
-
-		_stable = _changes;
 		_changes = null;
+		for (Integer updateId : _updates) {
+			final int position = _stable.indexOf(updateId);
+			if (position > 0) {
+				_adapter.notifyItemChanged(position);
+			}
+		}
 		_updates.clear();
 	}
 
