@@ -92,6 +92,7 @@ public class RecyclerAdapterCommandManager {
 		skipProcessing = _stable.isEmpty() || skipProcessing;
 		if (skipProcessing) {
 			_stable = _changes;
+			_changes = null;
 			_updates.clear();
 			_adapter.notifyDataSetChanged();
 			return;
