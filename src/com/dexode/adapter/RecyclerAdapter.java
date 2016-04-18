@@ -19,6 +19,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<BaseHolder> {
 
 	public RecyclerAdapter(final Activity activity) {
 		_layoutInflater = activity.getLayoutInflater();
+		_commandManager = new RecyclerAdapterCommandManager(this);
 	}
 
 	@Override
@@ -80,33 +81,62 @@ public class RecyclerAdapter extends RecyclerView.Adapter<BaseHolder> {
 
 	public void insertElement(int position, Element element) {
 		_elements.add(position, element);
-		notifyItemInserted(position);
+		_commandManager.insert(position, getId(element));
 	}
 
 	public void addElement(Element element) {
 		if (_elements.add(element)) {
-			notifyItemInserted(_elements.size() - 1);
+			_commandManager.pushBackOne(getId(element));
 		}
 	}
 
+	public void replaceElement(int position, Element element) {
+		remove(position);
+		insertElement(position, element);
+	}
+
+	public void update(int position) {
+		_commandManager.update(position, getId(_elements.get(position)));
+	}
+
+	public void remove(int position) {
+		final Element element = _elements.remove(position);
+		_commandManager.remove(position);
+	}
+
 	public void addAllElements(final ArrayList<Element> elements) {
-		int insertPosition = _elements.size();
 		_elements.addAll(elements);
-		notifyItemRangeInserted(insertPosition, elements.size());
+
+		ArrayList<Integer> ids = new ArrayList<>(elements.size());
+		for (Element element : elements) {
+			ids.add(getId(element));
+		}
+
+		_commandManager.pushBackAll(ids);
+	}
+
+	public void commitChanges() {
+		_commandManager.commit();
 	}
 
 	protected void setElements(ArrayList<Element> elements) {
 		_elements = elements;
+		_commandManager.reset();
+		for (Element element : elements) {
+			_commandManager.pushBackOne(getId(element));
+		}
 	}
 
 	public int removeAllByType(int type) {
 		ArrayList<Element> filteredElements = new ArrayList<>(_elements.size());
+		int offset = 0;
 		for (int i = 0; i < _elements.size(); ++i) {
 			Element element = _elements.get(i);
 			if (element.layoutId != type) {
 				filteredElements.add(element);
 			} else {
-				notifyItemRemoved(i);
+				_commandManager.remove(i - offset);
+				++offset;
 			}
 		}
 		_elements = filteredElements;
@@ -125,9 +155,17 @@ public class RecyclerAdapter extends RecyclerView.Adapter<BaseHolder> {
 		return _elements;
 	}
 
+	private int getId(Element element) {
+		if (element.data == null) {
+			return 0;
+		}
+		return element.data.hashCode();
+	}
+
 	private ArrayList<Element> _elements = new ArrayList<>();
 	private SparseArray<ViewHolderCreator> _holderCreators = new SparseArray<>(4);
 	private LayoutInflater _layoutInflater;
+	private RecyclerAdapterCommandManager _commandManager;
 
 	public interface ViewHolderCreator {
 		public BaseHolder create(final View itemView);
