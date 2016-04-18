@@ -57,13 +57,18 @@ public class RecyclerAdapter extends RecyclerView.Adapter<BaseHolder> {
 		return count;
 	}
 
-	public boolean isItemTypePresent(final int type) {
-		for (Element element : _elements) {
-			if (element.layoutId == type) {
-				return true;
+	/**
+	 * @param type
+	 *
+	 * @return position of type when found. Return -1 when not found
+	 */
+	public int firstIndexOfType(final int type) {
+		for (int i = 0; i < _elements.size(); ++i) {
+			if (_elements.get(i).layoutId == type) {
+				return i;
 			}
 		}
-		return false;
+		return -1;
 	}
 
 	public void addViewHolderCreator(int viewType, ViewHolderCreator creator) {
