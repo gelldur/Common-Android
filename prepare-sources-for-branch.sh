@@ -19,6 +19,7 @@ com/dexode/util/DeviceId.java
 com/dexode/adapter/BaseAdapter.java
 com/dexode/adapter/ViewHolderAdapterHelper.java
 com/dexode/adapter/RecyclerAdapter.java
+com/dexode/adapter/RecyclerAdapterCommandManager.java
 com/dexode/adapter/holder/BaseHolder.java
 com/dexode/util/Assert.java
 com/dexode/util/DebugUtils.java
