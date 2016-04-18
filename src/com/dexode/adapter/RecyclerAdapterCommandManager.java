@@ -85,6 +85,18 @@ public class RecyclerAdapterCommandManager {
 	}
 
 	public void commit() {
+		commit(false);
+	}
+
+	public void commit(boolean skipProcessing) {
+		skipProcessing = _stable.isEmpty() || skipProcessing;
+		if (skipProcessing) {
+			_stable = _changes;
+			_updates.clear();
+			_adapter.notifyDataSetChanged();
+			return;
+		}
+
 		if (_changes != null) {
 			process();
 			_stable = _changes;
@@ -101,11 +113,6 @@ public class RecyclerAdapterCommandManager {
 	}
 
 	private void process() {
-		if (_stable.isEmpty()) {
-			_adapter.notifyDataSetChanged();
-			return;
-		}
-
 		ArrayList<Range> inserted = new ArrayList<>(32);
 		ArrayList<Range> removed = new ArrayList<>(32);
 		ArrayList<Integer> processed = new ArrayList<>(_stable);
