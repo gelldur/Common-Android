@@ -125,6 +125,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter<BaseHolder> {
 		_commandManager.commit();
 	}
 
+	public void commitChanges(boolean skipProcessing) {
+		_commandManager.commit(skipProcessing);
+	}
+
 	protected void setElements(ArrayList<Element> elements) {
 		_elements = elements;
 		_commandManager.reset();
