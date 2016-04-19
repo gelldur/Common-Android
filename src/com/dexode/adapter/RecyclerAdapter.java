@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.dexode.adapter.holder.BaseHolder;
+import com.dexode.util.log.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,10 +24,19 @@ public class RecyclerAdapter extends RecyclerView.Adapter<BaseHolder> {
 	}
 
 	@Override
+	public void onAttachedToRecyclerView(final RecyclerView recyclerView) {
+		super.onAttachedToRecyclerView(recyclerView);
+		_commandManager.onAttachedToRecyclerView();
+	}
+
+	@Override
 	public BaseHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
 
 		final View view = _layoutInflater.inflate(viewType, parent, false);
 		final ViewHolderCreator viewHolderCreator = _holderCreators.get(viewType);
+		if (viewHolderCreator == null) {
+			Logger.e("Unknown holder creator " + viewType);
+		}
 		final BaseHolder viewHolder = viewHolderCreator.create(view);
 
 		return viewHolder;
@@ -121,12 +131,22 @@ public class RecyclerAdapter extends RecyclerView.Adapter<BaseHolder> {
 		_commandManager.pushBackAll(ids);
 	}
 
+	public void addAllElements(int viewType, final List<?> data) {
+		ArrayList<Integer> ids = new ArrayList<>(data.size());
+		for (Object dataObject : data) {
+
+			final Element element = new Element(viewType, dataObject);
+			addElement(element);
+			ids.add(getId(element));
+		}
+	}
+
 	public void commitChanges() {
 		_commandManager.commit();
 	}
 
-	public void commitChanges(boolean skipProcessing) {
-		_commandManager.commit(skipProcessing);
+	public void commitChangesDataSetChanged() {
+		_commandManager.commit(true);
 	}
 
 	protected void setElements(ArrayList<Element> elements) {
@@ -153,6 +173,11 @@ public class RecyclerAdapter extends RecyclerView.Adapter<BaseHolder> {
 		return _elements.size();
 	}
 
+	public void clear() {
+		_elements.clear();
+		_commandManager.reset();
+	}
+
 	public static ArrayList<Element> createArray(final int type, List<?> data) {
 		ArrayList<Element> elements = new ArrayList<>(data.size());
 		for (Object object : data) {
@@ -167,7 +192,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<BaseHolder> {
 
 	private int getId(Element element) {
 		if (element.data == null) {
-			return 0;
+			return element.layoutId;
 		}
 		return element.data.hashCode();
 	}

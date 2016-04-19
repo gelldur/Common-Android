@@ -24,6 +24,7 @@ public class RecyclerAdapterCommandManagerTest {
 	public void simpleTest() {
 
 		RecyclerAdapterCommandManager manager = new RecyclerAdapterCommandManager(_adapterWrapper);
+		manager.onAttachedToRecyclerView();
 		manager.pushBackOne(1);
 		manager.pushBackOne(2);
 		manager.pushBackOne(3);
@@ -38,6 +39,7 @@ public class RecyclerAdapterCommandManagerTest {
 	@Test
 	public void checkTransaction() {
 		RecyclerAdapterCommandManager manager = new RecyclerAdapterCommandManager(_adapterWrapper);
+		manager.onAttachedToRecyclerView();
 		manager.pushBackOne(1);
 		manager.pushBackOne(2);
 		manager.pushBackOne(3);
@@ -51,7 +53,7 @@ public class RecyclerAdapterCommandManagerTest {
 		manager.remove(0);
 		manager.insert(0, 1);
 
-		verify(_adapterWrapper, times(1)).notifyDataSetChanged();
+		verify(_adapterWrapper, times(2)).notifyDataSetChanged();
 		verify(_adapterWrapper, never()).notifyItemMoved(anyInt(), anyInt());
 		verify(_adapterWrapper, never()).notifyItemRangeInserted(anyInt(), anyInt());
 		verify(_adapterWrapper, never()).notifyItemRangeRemoved(anyInt(), anyInt());
@@ -62,7 +64,7 @@ public class RecyclerAdapterCommandManagerTest {
 		manager.remove(1);
 		manager.insert(1, 2);
 
-		verify(_adapterWrapper, times(1)).notifyDataSetChanged();
+		verify(_adapterWrapper, times(2)).notifyDataSetChanged();
 		verify(_adapterWrapper, never()).notifyItemMoved(anyInt(), anyInt());
 		verify(_adapterWrapper, never()).notifyItemRangeInserted(anyInt(), anyInt());
 		verify(_adapterWrapper, never()).notifyItemRangeRemoved(anyInt(), anyInt());
@@ -73,7 +75,7 @@ public class RecyclerAdapterCommandManagerTest {
 		manager.remove(2);
 		manager.insert(2, 3);
 
-		verify(_adapterWrapper, times(1)).notifyDataSetChanged();
+		verify(_adapterWrapper, times(2)).notifyDataSetChanged();
 		verify(_adapterWrapper, never()).notifyItemMoved(anyInt(), anyInt());
 		verify(_adapterWrapper, never()).notifyItemRangeInserted(anyInt(), anyInt());
 		verify(_adapterWrapper, never()).notifyItemRangeRemoved(anyInt(), anyInt());
@@ -84,7 +86,7 @@ public class RecyclerAdapterCommandManagerTest {
 		manager.remove(3);
 		manager.insert(3, 4);
 
-		verify(_adapterWrapper, times(1)).notifyDataSetChanged();
+		verify(_adapterWrapper, times(2)).notifyDataSetChanged();
 		verify(_adapterWrapper, never()).notifyItemMoved(anyInt(), anyInt());
 		verify(_adapterWrapper, never()).notifyItemRangeInserted(anyInt(), anyInt());
 		verify(_adapterWrapper, never()).notifyItemRangeRemoved(anyInt(), anyInt());
@@ -95,7 +97,7 @@ public class RecyclerAdapterCommandManagerTest {
 		manager.remove(4);
 		manager.insert(4, 5);
 
-		verify(_adapterWrapper, times(1)).notifyDataSetChanged();
+		verify(_adapterWrapper, times(2)).notifyDataSetChanged();
 		verify(_adapterWrapper, never()).notifyItemMoved(anyInt(), anyInt());
 		verify(_adapterWrapper, never()).notifyItemRangeInserted(anyInt(), anyInt());
 		verify(_adapterWrapper, never()).notifyItemRangeRemoved(anyInt(), anyInt());
@@ -107,6 +109,7 @@ public class RecyclerAdapterCommandManagerTest {
 	@Test
 	public void checkClean() {
 		RecyclerAdapterCommandManager manager = new RecyclerAdapterCommandManager(_adapterWrapper);
+		manager.onAttachedToRecyclerView();
 		manager.pushBackOne(1);
 		manager.pushBackOne(2);
 		manager.pushBackOne(3);
@@ -125,7 +128,7 @@ public class RecyclerAdapterCommandManagerTest {
 
 		manager.commit();
 
-		verify(_adapterWrapper, times(1)).notifyDataSetChanged();
+		verify(_adapterWrapper, times(2)).notifyDataSetChanged();
 		verify(_adapterWrapper, never()).notifyItemMoved(anyInt(), anyInt());
 		verify(_adapterWrapper, never()).notifyItemRangeInserted(anyInt(), anyInt());
 		verify(_adapterWrapper, never()).notifyItemRangeRemoved(anyInt(), anyInt());
@@ -137,6 +140,7 @@ public class RecyclerAdapterCommandManagerTest {
 	@Test
 	public void checkChanges() {
 		RecyclerAdapterCommandManager manager = new RecyclerAdapterCommandManager(_adapterWrapper);
+		manager.onAttachedToRecyclerView();
 		manager.pushBackOne(1);
 		manager.pushBackOne(2);
 		manager.pushBackOne(3);
@@ -152,7 +156,7 @@ public class RecyclerAdapterCommandManagerTest {
 
 		manager.commit();
 
-		verify(_adapterWrapper, times(1)).notifyDataSetChanged();
+		verify(_adapterWrapper, times(2)).notifyDataSetChanged();
 		verify(_adapterWrapper, never()).notifyItemMoved(anyInt(), anyInt());
 		verify(_adapterWrapper, never()).notifyItemRangeInserted(anyInt(), anyInt());
 		verify(_adapterWrapper, never()).notifyItemRangeRemoved(anyInt(), anyInt());
@@ -165,6 +169,7 @@ public class RecyclerAdapterCommandManagerTest {
 	@Test
 	public void checkChangesAddRemove() {
 		RecyclerAdapterCommandManager manager = new RecyclerAdapterCommandManager(_adapterWrapper);
+		manager.onAttachedToRecyclerView();
 		manager.pushBackOne(1);
 		manager.pushBackOne(2);
 		manager.pushBackOne(3);
@@ -181,7 +186,7 @@ public class RecyclerAdapterCommandManagerTest {
 
 		manager.commit();
 
-		verify(_adapterWrapper, times(1)).notifyDataSetChanged();
+		verify(_adapterWrapper, times(2)).notifyDataSetChanged();
 		verify(_adapterWrapper, never()).notifyItemMoved(anyInt(), anyInt());
 		verify(_adapterWrapper, never()).notifyItemRangeInserted(anyInt(), anyInt());
 		verify(_adapterWrapper, never()).notifyItemRangeRemoved(anyInt(), anyInt());
@@ -194,6 +199,7 @@ public class RecyclerAdapterCommandManagerTest {
 	@Test
 	public void checkChangesMove() {
 		RecyclerAdapterCommandManager manager = new RecyclerAdapterCommandManager(_adapterWrapper);
+		manager.onAttachedToRecyclerView();
 		manager.pushBackOne(1);
 		manager.pushBackOne(2);
 		manager.pushBackOne(3);
@@ -211,7 +217,7 @@ public class RecyclerAdapterCommandManagerTest {
 
 		manager.commit();
 
-		verify(_adapterWrapper, times(1)).notifyDataSetChanged();
+		verify(_adapterWrapper, times(2)).notifyDataSetChanged();
 		verify(_adapterWrapper, times(2)).notifyItemMoved(anyInt(), anyInt());
 		verify(_adapterWrapper, never()).notifyItemRangeInserted(anyInt(), anyInt());
 		verify(_adapterWrapper, never()).notifyItemRangeRemoved(anyInt(), anyInt());
