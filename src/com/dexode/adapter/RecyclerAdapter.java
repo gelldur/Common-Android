@@ -192,7 +192,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<BaseHolder> {
 
 	private int getId(Element element) {
 		if (element.data == null) {
-			return 0;
+			return element.layoutId;
 		}
 		return element.data.hashCode();
 	}
