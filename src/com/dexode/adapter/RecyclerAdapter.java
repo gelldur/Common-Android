@@ -127,6 +127,16 @@ public class RecyclerAdapter extends RecyclerView.Adapter<BaseHolder> {
 		_commandManager.pushBackAll(ids);
 	}
 
+	public void addAllElements(int viewType, final List<?> data) {
+		ArrayList<Integer> ids = new ArrayList<>(data.size());
+		for (Object dataObject : data) {
+
+			final Element element = new Element(viewType, dataObject);
+			addElement(element);
+			ids.add(getId(element));
+		}
+	}
+
 	public void commitChanges() {
 		_commandManager.commit();
 	}
@@ -157,6 +167,11 @@ public class RecyclerAdapter extends RecyclerView.Adapter<BaseHolder> {
 		}
 		_elements = filteredElements;
 		return _elements.size();
+	}
+
+	public void clear() {
+		_elements.clear();
+		_commandManager.reset();
 	}
 
 	public static ArrayList<Element> createArray(final int type, List<?> data) {
