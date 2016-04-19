@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.dexode.adapter.holder.BaseHolder;
+import com.dexode.util.log.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<BaseHolder> {
 
 		final View view = _layoutInflater.inflate(viewType, parent, false);
 		final ViewHolderCreator viewHolderCreator = _holderCreators.get(viewType);
+		if (viewHolderCreator == null) {
+			Logger.e("Unknown holder creator " + viewType);
+		}
 		final BaseHolder viewHolder = viewHolderCreator.create(view);
 
 		return viewHolder;
