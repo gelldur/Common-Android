@@ -95,7 +95,9 @@ public class RecyclerAdapterCommandManager {
 
 		skipProcessing = _stable.isEmpty() || skipProcessing;
 		if (skipProcessing) {
-			_stable = _changes;
+			if (_changes != null) {
+				_stable = _changes;
+			}
 			_changes = null;
 			_updates.clear();
 			_adapter.notifyDataSetChanged();
@@ -110,7 +112,7 @@ public class RecyclerAdapterCommandManager {
 		_changes = null;
 		for (Integer updateId : _updates) {
 			final int position = _stable.indexOf(updateId);
-			if (position > 0) {
+			if (position > -1) {
 				_adapter.notifyItemChanged(position);
 			}
 		}
