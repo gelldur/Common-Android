@@ -131,8 +131,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<BaseHolder> {
 		_commandManager.commit();
 	}
 
-	public void commitChanges(boolean skipProcessing) {
-		_commandManager.commit(skipProcessing);
+	public void commitChangesDataSetChanged() {
+		_commandManager.commit(true);
 	}
 
 	protected void setElements(ArrayList<Element> elements) {
