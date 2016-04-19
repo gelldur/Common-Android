@@ -89,6 +89,10 @@ public class RecyclerAdapterCommandManager {
 	}
 
 	public void commit(boolean skipProcessing) {
+		if (_isReady == false) {
+			return;
+		}
+
 		skipProcessing = _stable.isEmpty() || skipProcessing;
 		if (skipProcessing) {
 			_stable = _changes;
@@ -184,6 +188,12 @@ public class RecyclerAdapterCommandManager {
 		}
 	}
 
+	public void onAttachedToRecyclerView() {
+		_isReady = true;
+		commit();
+	}
+
+	private boolean _isReady = false;
 	private ArrayList<Integer> _changes = new ArrayList<>(32);
 	private Set<Integer> _updates = new HashSet<>(32);
 	private ArrayList<Integer> _stable = new ArrayList<>(32);

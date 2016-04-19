@@ -23,6 +23,12 @@ public class RecyclerAdapter extends RecyclerView.Adapter<BaseHolder> {
 	}
 
 	@Override
+	public void onAttachedToRecyclerView(final RecyclerView recyclerView) {
+		super.onAttachedToRecyclerView(recyclerView);
+		_commandManager.onAttachedToRecyclerView();
+	}
+
+	@Override
 	public BaseHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
 
 		final View view = _layoutInflater.inflate(viewType, parent, false);
