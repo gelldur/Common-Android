@@ -160,6 +160,11 @@ public class RecyclerAdapterCommandManager {
 			}
 		}
 
+		if (processed.size() != _stable.size()) {
+			//This is for backup
+			_adapter.notifyDataSetChanged();
+		}
+
 		//Search for moved
 		for (int i = 0; i < _changes.size(); ++i) {
 			for (int j = i + 1; j < processed.size(); ++j) {
